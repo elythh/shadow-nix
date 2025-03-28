@@ -90,18 +90,18 @@ in stdenv.mkDerivation rec {
 
   # Unpack the AppImage
   unpackPhase = ''
-    echo "Source: $src"
-    ls -l $src || true
-    cp $src ./Shadow.AppImage
-    chmod 777 ./Shadow.AppImage
+  echo "Source: $src"
+  cp $src ./Shadow.AppImage
+  chmod +x ./Shadow.AppImage  # Change les permissions
+  ls -l ./Shadow.AppImage  # Vérifie les permissions
+  
+  patchelf \
+    --set-interpreter ${stdenv.cc.bintools.dynamicLinker} \
+    --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 \
+    ./Shadow.AppImage
 
-    patchelf \
-      --set-interpreter ${stdenv.cc.bintools.dynamicLinker} \
-      --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 \
-      ./Shadow.AppImage
-
-    ./Shadow.AppImage --appimage-extract
-    rm ./Shadow.AppImage
+  ./Shadow.AppImage --appimage-extract
+  rm ./Shadow.AppImage
   '';
 
   # Create the package
