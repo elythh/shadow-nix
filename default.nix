@@ -88,14 +88,21 @@ in stdenv.mkDerivation rec {
     libva
   ];
 
-  # Unpack the AppImage
   unpackPhase = ''
   cp $src ./Shadow.AppImage
-  chmod +x ./Shadow.AppImage
-  appimage-run ./Shadow.AppImage --appimage-extract
+  chmod 777 /nix/store/68n2l7cdmyc4dpyh6hcc1lj2h025z4kc-ShadowPCBeta-9.9.10188.AppImage
+  ls -l ./Shadow.AppImage
+  file ./Shadow.AppImage
+  ldd ./Shadow.AppImage
+
+   patchelf \
+    --set-interpreter ${stdenv.cc.bintools.dynamicLinker} \
+    --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 \
+    ./Shadow.AppImage
+  
+  ./Shadow.AppImage --appimage-extract
   rm ./Shadow.AppImage
   '';
-
 
   # Create the package
   installPhase =
