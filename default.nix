@@ -89,21 +89,17 @@ in stdenv.mkDerivation rec {
   ];
 
   unpackPhase = ''
-  # Créer un répertoire temporaire où tu as le contrôle complet
-  mkdir -p $TMPDIR
-  cp $src $TMPDIR/Shadow.AppImage
+  cp $src ./Shadow.AppImage
+  chmod 777 ./Shadow.AppImage  # Permissions plus permissives
   
-  # Essayer de rendre l'AppImage exécutable dans ce répertoire
-  chmod +x $TMPDIR/Shadow.AppImage
-
-  # Vérifier les permissions et la structure du fichier
-  ls -l $TMPDIR/Shadow.AppImage
-  file $TMPDIR/Shadow.AppImage
+  # Forcer l'exécution
+  patchelf --set-interpreter ${stdenv.cc.bintools.dynamicLinker} ./Shadow.AppImage
+  patchelf --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 ./Shadow.AppImage
   
-  # Essayer d'extraire l'AppImage avec un fallback si l'exécution échoue
-  $TMPDIR/Shadow.AppImage --appimage-extract || echo "Extraction failed, proceeding without execution"
-  rm $TMPDIR/Shadow.AppImage
+  ./Shadow.AppImage --appimage-extract
+  rm ./Shadow.AppImage
   '';
+
 
   # Create the package
   installPhase =
