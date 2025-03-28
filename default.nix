@@ -90,6 +90,8 @@ in stdenv.mkDerivation rec {
 
   # Unpack the AppImage
   unpackPhase = ''
+    echo "Source: $src"
+    ls -l $src || true
     cp $src ./Shadow.AppImage
     chmod 777 ./Shadow.AppImage
 
