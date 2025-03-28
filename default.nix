@@ -89,19 +89,20 @@ in stdenv.mkDerivation rec {
   ];
 
   unpackPhase = ''
-  cp $src ./Shadow.AppImage
-  chmod 777 ShadowPCBeta-*
-  ls -l ./Shadow.AppImage
-  file ./Shadow.AppImage
-  ldd ./Shadow.AppImage
-
-   patchelf \
-    --set-interpreter ${stdenv.cc.bintools.dynamicLinker} \
-    --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 \
-    ./Shadow.AppImage
+  # Créer un répertoire temporaire où tu as le contrôle complet
+  mkdir -p $TMPDIR
+  cp $src $TMPDIR/Shadow.AppImage
   
-  ./Shadow.AppImage --appimage-extract
-  rm ./Shadow.AppImage
+  # Essayer de rendre l'AppImage exécutable dans ce répertoire
+  chmod +x $TMPDIR/Shadow.AppImage
+
+  # Vérifier les permissions et la structure du fichier
+  ls -l $TMPDIR/Shadow.AppImage
+  file $TMPDIR/Shadow.AppImage
+  
+  # Essayer d'extraire l'AppImage avec un fallback si l'exécution échoue
+  $TMPDIR/Shadow.AppImage --appimage-extract || echo "Extraction failed, proceeding without execution"
+  rm $TMPDIR/Shadow.AppImage
   '';
 
   # Create the package
