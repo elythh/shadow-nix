@@ -89,13 +89,14 @@ in stdenv.mkDerivation rec {
   ];
 
   unpackPhase = ''
+  # Simuler les variables d'environnement de nix-shell
+  export PATH=$PATH:${stdenv.cc.cc}/bin
+  export LD_LIBRARY_PATH=${lib.makeLibraryPath buildInputs}:${LD_LIBRARY_PATH}
+
   cp $src ./Shadow.AppImage
-  chmod 777 ./Shadow.AppImage  # Permissions plus permissives
+  chmod +x ./Shadow.AppImage
   
-  # Forcer l'exécution
-  patchelf --set-interpreter ${stdenv.cc.bintools.dynamicLinker} ./Shadow.AppImage
-  patchelf --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 ./Shadow.AppImage
-  
+  # Exécuter l'AppImage avec les variables environnementales du nix-shell
   ./Shadow.AppImage --appimage-extract
   rm ./Shadow.AppImage
   '';
