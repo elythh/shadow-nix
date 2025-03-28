@@ -25,7 +25,7 @@ in stdenv.mkDerivation rec {
   channel = shadowChannel;
 
   # Add all hooks
-  nativeBuildInputs = [ autoPatchelfHook wrapGAppsHook makeWrapper ];
+  nativeBuildInputs = [ autoPatchelfHook wrapGAppsHook makeWrapper appimage-run];
 
   # Useful libraries to build the package
   buildInputs = [
@@ -90,19 +90,12 @@ in stdenv.mkDerivation rec {
 
   # Unpack the AppImage
   unpackPhase = ''
-  echo "Source: $src"
   cp $src ./Shadow.AppImage
-  chmod +x ./Shadow.AppImage  # Change les permissions
-  ls -l ./Shadow.AppImage  # Vérifie les permissions
-  
-  patchelf \
-    --set-interpreter ${stdenv.cc.bintools.dynamicLinker} \
-    --replace-needed libz.so.1 ${zlib}/lib/libz.so.1 \
-    ./Shadow.AppImage
-
-  ./Shadow.AppImage --appimage-extract
+  chmod +x ./Shadow.AppImage
+  appimage-run ./Shadow.AppImage --appimage-extract
   rm ./Shadow.AppImage
   '';
+
 
   # Create the package
   installPhase =
