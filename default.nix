@@ -88,17 +88,18 @@ in stdenv.mkDerivation rec {
     libva
   ];
 
-  unpackPhase = ''
-  # Simuler les variables d'environnement de nix-shell
-  export PATH=$PATH:${stdenv.cc.cc}/bin
-  export LD_LIBRARY_PATH=${lib.makeLibraryPath buildInputs}:${LD_LIBRARY_PATH}
-
+ unpackPhase = ''
+  # Copier l'AppImage dans le répertoire local
   cp $src ./Shadow.AppImage
-  chmod +x ./Shadow.AppImage
-  
-  # Exécuter l'AppImage avec les variables environnementales du nix-shell
-  ./Shadow.AppImage --appimage-extract
-  rm ./Shadow.AppImage
+
+  # Renommer l'AppImage en .7z
+  mv ./Shadow.AppImage ./Shadow.7z
+
+  # Extraire le contenu du fichier .7z
+  7z x ./Shadow.7z -o./extracted
+
+  # Nettoyer
+  rm ./Shadow.7z
   '';
 
 
