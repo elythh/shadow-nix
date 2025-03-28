@@ -90,7 +90,7 @@ in stdenv.mkDerivation rec {
 
   unpackPhase = ''
   cp $src ./Shadow.AppImage
-  chmod 777 /nix/store/68n2l7cdmyc4dpyh6hcc1lj2h025z4kc-ShadowPCBeta-9.9.10188.AppImage
+  chmod 777 ShadowPCBeta-*
   ls -l ./Shadow.AppImage
   file ./Shadow.AppImage
   ldd ./Shadow.AppImage
