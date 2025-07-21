@@ -25,7 +25,7 @@ in stdenv.mkDerivation rec {
   channel = shadowChannel;
 
   # Add all hooks
-  nativeBuildInputs = [ autoPatchelfHook wrapGAppsHook makeWrapper];
+  nativeBuildInputs = [ autoPatchelfHook wrapGAppsHook makeWrapper p7zip];
 
   # Useful libraries to build the package
   buildInputs = [
@@ -96,7 +96,7 @@ in stdenv.mkDerivation rec {
   mv ./Shadow.AppImage ./Shadow.7z
 
   # Extraire le contenu du fichier .7z
-  7z x ./Shadow.7z -o./extracted
+  ${p7zip}/bin/7z x ./Shadow.7z -o./extracted
 
   # Nettoyer
   rm ./Shadow.7z
