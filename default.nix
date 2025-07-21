@@ -25,7 +25,7 @@ in stdenv.mkDerivation rec {
   channel = shadowChannel;
 
   # Add all hooks
-  nativeBuildInputs = [ autoPatchelfHook wrapGAppsHook makeWrapper appimage-run];
+  nativeBuildInputs = [ autoPatchelfHook wrapGAppsHook makeWrapper];
 
   # Useful libraries to build the package
   buildInputs = [
